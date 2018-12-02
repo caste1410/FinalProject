@@ -71,23 +71,23 @@ public class FinalProjectMySQL {
 		System.out.println( "(4) Lista con predicado de Horarios\n" );
 		System.out.println( "(5) Lista completa de Periodos\n" );
 		System.out.println( "(6) Lista con predicado de Periodos\n" );
-		System.out.println( "(9) Lista completa de Reservaciones\n" );
-		System.out.println( "(10) Lista con predicado de Reservaciones\n" );
-		System.out.println( "(11) Lista completa de Salones\n" );
-		System.out.println( "(12) Lista con predicado de Salones\n" );
+		System.out.println( "(7) Lista completa de Reservaciones\n" );
+		System.out.println( "(8) Lista con predicado de Reservaciones\n" );
+		System.out.println( "(9) Lista completa de Salones\n" );
+		System.out.println( "(10) Lista con predicado de Salones\n" );
 
-		System.out.println( "(13) Hacer una Reservacion\n" );
-		System.out.println( "(14) Cancelar una Reservacion\n" );
-		System.out.println( "(15) Modificar una Reservacion\n" );
+		System.out.println( "(11) Hacer una Reservacion\n" );
+		System.out.println( "(12) Cancelar una Reservacion\n" );
+		System.out.println( "(13) Modificar una Reservacion\n" );
 
-		System.out.println( "(16) Agregar Horario\n" );
-		System.out.println( "(17) Borrar un Horario (Completo)\n" );
-		System.out.println( "(18) Modificar un Horario\n" );
+		System.out.println( "(14) Agregar Horario\n" );
+		System.out.println( "(15) Borrar un Horario (Completo)\n" );
+		System.out.println( "(16) Modificar un Horario\n" );
 
-		System.out.println( "(19) Validar todas operaciones\n" );
-		System.out.println( "(20) Abortar todas las operaciones\n" );
-		System.out.println( "(21) Cambiar nivel de aislamiento\n" );
-		System.out.println( "(22) Salir\n\n" );
+		System.out.println( "(17) Validar todas operaciones\n" );
+		System.out.println( "(28) Abortar todas las operaciones\n" );
+		System.out.println( "(19) Cambiar nivel de aislamiento\n" );
+		System.out.println( "(20) Salir\n\n" );
 		System.out.print( "Ingrese la opcion deseada: " );
 
 		switch( Integer.parseInt( "0" + in.readLine() ) ) {
@@ -122,34 +122,34 @@ public class FinalProjectMySQL {
 				query( "select * from PERIODO where " + in.readLine() );
 			break;
 
-			case 9:	//Lista completa de Reservaciones
+			case 7:	//Lista completa de Reservaciones
 				System.out.println( "\nIDSALON\tNOMBRE\tFECHA\tDIASEM\tHORA\tMINUTO\tDURACION\n" );
 				query( "select * from RESERVACION" );
 			break;
 
-			case 10: //Lista con predicado de Reservaciones
+			case 8: //Lista con predicado de Reservaciones
 				System.out.println( "\nPredicado?" );
 				query( "select * from RESERVACION where " + in.readLine() );
 			break;
 
-			case 11: //Lista completa de Salones
+			case 9: //Lista completa de Salones
 				System.out.println( "\nIDSALON\tCAPACIDAD\tTIPO\n" );
 				query( "select * from SALON" );
 			break;
 
-			case 12: //Lista con predicado de Salones
+			case 10: //Lista con predicado de Salones
 				System.out.println( "\nPredicado?" );
 				query( "select * from SALON where " + in.readLine() );
 			break;
 
-			case 13: //Hacer una Reservacion
+			case 11: //Hacer una Reservacion
 				statement = "insert into RESERVACION values ( ";
 
 				System.out.println( "\nSalon?" );
 				statement += "'" + in.readLine() + "', ";
 
-				System.out.println( "ID?" );
-				statement += in.readLine() + ", ";
+				System.out.println( "Nombre?" );
+				statement += "'" + in.readLine() + "', ";
 
 				System.out.println( "Fecha (yyyy-mm-dd)?" );
 				statement += "'" + in.readLine() + "', ";
@@ -169,17 +169,17 @@ public class FinalProjectMySQL {
 				stmt.executeUpdate( statement );
 			break;
 
-			case 14: //Cancelar una Reservacion
+			case 12: //Cancelar una Reservacion
 				statement = "delete from RESERVACION where ";
 
 				System.out.println( "\nSalón?" );
 				statement += "IDSALON = '" + in.readLine() + "' AND ";
 
-				System.out.println( "\nID Persona?" );
-				statement += "ID = " + in.readLine() + " AND ";
+				System.out.println( "\nNombre?" );
+				statement += "NOMBRE = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nFecha (yyyy-mm-dd)?" );
-				statement += "FECHAHORA = '" + in.readLine() + "' AND ";
+				statement += "FECHA = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nDia de la Semana (1-7)?" );
 				statement += "DIASEM = " + in.readLine() + " AND ";
@@ -190,7 +190,7 @@ public class FinalProjectMySQL {
 				stmt.executeUpdate( statement );
 			break;
 
-			case 15: //Modificar una Reservacion
+			case 13: //Modificar una Reservacion
 				statement = "update RESERVACION set ";
 
 				System.out.println( "\n<Atributo> = <Valor>?" );
@@ -202,7 +202,7 @@ public class FinalProjectMySQL {
 				stmt.executeUpdate( statement );
 			break;
 
-			case 16: //Agregar Horario
+			case 14: //Agregar Horario
 				statement = "insert into HORARIO values ( ";
 
 				System.out.println( "\nClave?" );
@@ -226,16 +226,13 @@ public class FinalProjectMySQL {
 				System.out.println( "Periodo?" );
 				statement += "'" + in.readLine() + "', ";
 
-				System.out.println( "Año?" );
-				statement += in.readLine() + ", ";
-
 				System.out.println( "Salón?" );
 				statement += "'" + in.readLine() + "' );";
 
 				stmt.executeUpdate( statement );
 			break;
 
-			case 17: //Borrar un Horario (Completo)
+			case 15: //Borrar un Horario (Completo)
 				statement = "delete from HORARIO where ";
 
 				System.out.println( "\nClave?" );
@@ -247,7 +244,7 @@ public class FinalProjectMySQL {
 				stmt.executeUpdate( statement );
 			break;
 
-			case 18: //Modificar un Horario
+			case 16: //Modificar un Horario
 				statement = "update HORARIO set ";
 
 				System.out.println( "\n<Atributo> = <Valor>?" );
@@ -270,15 +267,15 @@ public class FinalProjectMySQL {
 				stmt.executeUpdate( statement );
 			break;
 
-			case 19: //Validar todas operaciones
+			case 17: //Validar todas operaciones
 				conn.commit();
 			break;
 
-			case 20: //Abortar todas las operaciones
+			case 18: //Abortar todas las operaciones
 				conn.rollback();
 			break;
 
-			case 21: //Cambiar nivel de aislamiento
+			case 19: //Cambiar nivel de aislamiento
 				System.out.println();
 				System.out.println( conn.TRANSACTION_NONE + " = TRANSACTION_NONE" );
 				System.out.println( conn.TRANSACTION_READ_UNCOMMITTED + " = TRANSACTION_READ_UNCOMMITTED" );
@@ -289,11 +286,11 @@ public class FinalProjectMySQL {
 				conn.setTransactionIsolation( Integer.parseInt( in.readLine() ) );
 			break;
 
-			case 22: //Salir
+			case 20: //Salir
 				return false;
 
 			default: //En caso de no caer en ninguna de los anteriores
-				System.out.println( "Error, ninguna opcion seleccionada" );
+				System.out.println( "Error, favor de seleccionar una opcion valida" );
 			break;
 		}//end switch
 
