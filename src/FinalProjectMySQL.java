@@ -8,13 +8,14 @@ import java.sql.*;
 import java.io.*;
 
 public class FinalProjectMySQL {
-
+	//Comando para correrlo -->   java -cp .;mysql-connector-java-8.0.13.jar FinalProjectMySQL
 	Connection conn = null;
 	Statement stmt = null;
 	BufferedReader in = null;
 
-	static final String URL = "jdbc:mysql://localhost/";
-	static final String BD = "PF";
+	//static final String URL = "jdbc:mysql://localhost/";
+	static final String URL = "jdbc:mysql://localhost/fptest?verifyServerCertificate=false&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	//static final String BD = "fptest";
 	static final String USER = "root";
 	static final String PASSWD = "";
 
@@ -22,7 +23,7 @@ public class FinalProjectMySQL {
 		Class.forName( "com.mysql.jdbc.Driver" );
 		System.out.print( "Connecting to the database... " );
 
-		conn = DriverManager.getConnection( URL+BD, USER, PASSWD );
+		conn = DriverManager.getConnection( URL/*+BD*/, USER, PASSWD );
 		System.out.println( "connected\n\n" );
 
 		conn.setAutoCommit( false );
@@ -45,9 +46,9 @@ public class FinalProjectMySQL {
 	}//end dumpResultSet()
 
 	private void query( String statement ) throws SQLException {
-		ResultSet rset = stmt.execute1Query( statement );
+		ResultSet rset = stmt.executeQuery( statement );
 
-		System.out.println( "Results:" );
+		//System.out.println( "Results:" );
 		dumpResultSet( rset );
 		System.out.println();
 		rset.close();
@@ -70,8 +71,6 @@ public class FinalProjectMySQL {
 		System.out.println( "(4) Lista con predicado de Horarios\n" );
 		System.out.println( "(5) Lista completa de Periodos\n" );
 		System.out.println( "(6) Lista con predicado de Periodos\n" );
-		System.out.println( "(7) Lista completa de Personas\n" );
-		System.out.println( "(8) Lista con predicado de Personas\n" );
 		System.out.println( "(9) Lista completa de Reservaciones\n" );
 		System.out.println( "(10) Lista con predicado de Reservaciones\n" );
 		System.out.println( "(11) Lista completa de Salones\n" );
@@ -94,6 +93,7 @@ public class FinalProjectMySQL {
 		switch( Integer.parseInt( "0" + in.readLine() ) ) {
 
 			case 1:	//Lista completa de Cursos
+				System.out.println( "CLAVEC\tSECCION\tTITULO\tPROFESOR\n" );
 				query( "select * from CURSO" );
 			break;
 
@@ -103,6 +103,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 3:	//Lista completa de Horarios
+				System.out.println( "\nCLAVEC\tSECCION\tDIASEM\tHORA\tMINUTO\tDURACION\tTITULOP\tIDSALON\n" );
 				query( "select * from HORARIO" );
 			break;
 
@@ -112,6 +113,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 5:	//Lista completa de Periodos
+				System.out.println( "\nTITULOP\tFECHAINICIO\tFECHAFIN\n" );
 				query( "select * from PERIODO" );
 			break;
 
@@ -120,16 +122,8 @@ public class FinalProjectMySQL {
 				query( "select * from PERIODO where " + in.readLine() );
 			break;
 
-			case 7:	//Lista completa de Personas
-				query( "select * from PERSONA" );
-			break;
-
-			case 8:	//Lista con predicado de Personas
-				System.out.println( "\nPredicado?" );
-				query( "select * from PERSONA where " + in.readLine() );
-			break;
-
 			case 9:	//Lista completa de Reservaciones
+				System.out.println( "\nIDSALON\tNOMBRE\tFECHA\tDIASEM\tHORA\tMINUTO\tDURACION\n" );
 				query( "select * from RESERVACION" );
 			break;
 
@@ -139,6 +133,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 11: //Lista completa de Salones
+				System.out.println( "\nIDSALON\tCAPACIDAD\tTIPO\n" );
 				query( "select * from SALON" );
 			break;
 
@@ -296,12 +291,12 @@ public class FinalProjectMySQL {
 
 			case 22: //Salir
 				return false;
-			break;
 
 			default: //En caso de no caer en ninguna de los anteriores
 				System.out.println( "Error, ninguna opcion seleccionada" );
 			break;
 		}//end switch
+
 		return true;
 
 	}//end menu()
@@ -328,4 +323,4 @@ public class FinalProjectMySQL {
 
 	}//end main()
 
-}//end class FinalProyectMySQL
+}//end class FinalProjectMySQL
