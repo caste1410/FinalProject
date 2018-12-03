@@ -6,6 +6,9 @@
 
 import java.sql.*;
 import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.util.Date;
 
 public class FinalProjectMySQL {
 	//Comando para correrlo -->   java -cp .;mysql-connector-java-8.0.13.jar FinalProjectMySQL
@@ -20,11 +23,11 @@ public class FinalProjectMySQL {
 	static final String PASSWD = "";
 
 	public FinalProjectMySQL() throws SQLException, Exception {
-		Class.forName( "com.mysql.jdbc.Driver" );
+		Class.forName( "com.mysql.cj.jdbc.Driver" );
 		System.out.print( "Connecting to the database... " );
 
 		conn = DriverManager.getConnection( URL/*+BD*/, USER, PASSWD );
-		System.out.println( "connected\n\n" );
+		System.out.println( "Connected\n\n" );
 
 		conn.setAutoCommit( false );
 		stmt = conn.createStatement();
@@ -64,34 +67,39 @@ public class FinalProjectMySQL {
 	private boolean menu() throws SQLException, IOException {
 		String statement;
 
+		String dateString = "";
+		Date date = null;
+		int dayOfWeek;
+		Calendar calendar;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
 		System.out.println( "\nNivel de aislamiento = " + conn.getTransactionIsolation() + "\n" );
-		System.out.println( "(1) Lista completa de Cursos\n" );
-		System.out.println( "(2) Lista con predicado de Cursos\n" );
-		System.out.println( "(3) Lista completa de Horarios\n" );
-		System.out.println( "(4) Lista con predicado de Horarios\n" );
-		System.out.println( "(5) Lista completa de Periodos\n" );
-		System.out.println( "(6) Lista con predicado de Periodos\n" );
-		System.out.println( "(7) Lista completa de Reservaciones\n" );
-		System.out.println( "(8) Lista con predicado de Reservaciones\n" );
-		System.out.println( "(9) Lista completa de Salones\n" );
+		System.out.println( "(1) Lista completa de Cursos" );
+		System.out.println( "(2) Lista con predicado de Cursos" );
+		System.out.println( "(3) Lista completa de Horarios" );
+		System.out.println( "(4) Lista con predicado de Horarios" );
+		System.out.println( "(5) Lista completa de Periodos" );
+		System.out.println( "(6) Lista con predicado de Periodos" );
+		System.out.println( "(7) Lista completa de Reservaciones" );
+		System.out.println( "(8) Lista con predicado de Reservaciones" );
+		System.out.println( "(9) Lista completa de Salones" );
 		System.out.println( "(10) Lista con predicado de Salones\n" );
 
-		System.out.println( "(11) Hacer una Reservacion\n" );
-		System.out.println( "(12) Cancelar una Reservacion\n" );
+		System.out.println( "(11) Hacer una Reservacion" );
+		System.out.println( "(12) Cancelar una Reservacion" );
 		System.out.println( "(13) Modificar una Reservacion\n" );
 
-		System.out.println( "(14) Agregar Horario\n" );
-		System.out.println( "(15) Borrar un Horario (Completo)\n" );
+		System.out.println( "(14) Agregar Horario" );
+		System.out.println( "(15) Borrar un Horario (Completo)" );
 		System.out.println( "(16) Modificar un Horario\n" );
 
-		System.out.println( "(17) Validar todas operaciones\n" );
-		System.out.println( "(28) Abortar todas las operaciones\n" );
-		System.out.println( "(19) Cambiar nivel de aislamiento\n" );
+		System.out.println( "(17) Validar todas operaciones" );
+		System.out.println( "(18) Abortar todas las operaciones" );
+		System.out.println( "(19) Cambiar nivel de aislamiento" );
 		System.out.println( "(20) Salir\n\n" );
 		System.out.print( "Ingrese la opcion deseada: " );
 
 		switch( Integer.parseInt( "0" + in.readLine() ) ) {
-
 			case 1:	//Lista completa de Cursos
 				System.out.println( "CLAVEC\tSECCION\tTITULO\tPROFESOR\n" );
 				query( "select * from CURSO" );
@@ -152,8 +160,19 @@ public class FinalProjectMySQL {
 				statement += "'" + in.readLine() + "', ";
 
 				System.out.println( "Fecha (yyyy-mm-dd)?" );
-				statement += "'" + in.readLine() + "', ";
+				dateString = in.readLine();
+				statement += "'" + dateString + "', ";
 
+				try {
+  					date = format.parse(dateString) ;
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
+    			calendar.setTime(date);
+    			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+				System.out.println( "\nDay of the week is: " + dayOfWeek );
+				
 				System.out.println( "Dia de la semana (1-7)?" );
 				statement += in.readLine() + ", ";
 
@@ -172,14 +191,25 @@ public class FinalProjectMySQL {
 			case 12: //Cancelar una Reservacion
 				statement = "delete from RESERVACION where ";
 
-				System.out.println( "\nSalón?" );
+				System.out.println( "\nSalon?" );
 				statement += "IDSALON = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nNombre?" );
 				statement += "NOMBRE = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nFecha (yyyy-mm-dd)?" );
-				statement += "FECHA = '" + in.readLine() + "' AND ";
+				dateString = in.readLine();
+				statement += "FECHA = '" + dateString + "' AND ";
+
+				try {
+  					date = format.parse(dateString) ;
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
+    			calendar.setTime(date);
+    			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+				System.out.println( "\nDay of the week is: " + dayOfWeek );
 
 				System.out.println( "\nDia de la Semana (1-7)?" );
 				statement += "DIASEM = " + in.readLine() + " AND ";
@@ -220,13 +250,13 @@ public class FinalProjectMySQL {
 				System.out.println( "Minuto?" );
 				statement += in.readLine() + ", ";
 
-				System.out.println( "Duración?" );
+				System.out.println( "Duracion?" );
 				statement += in.readLine() + ", ";
 
 				System.out.println( "Periodo?" );
 				statement += "'" + in.readLine() + "', ";
 
-				System.out.println( "Salón?" );
+				System.out.println( "Salon?" );
 				statement += "'" + in.readLine() + "' );";
 
 				stmt.executeUpdate( statement );
@@ -238,7 +268,7 @@ public class FinalProjectMySQL {
 				System.out.println( "\nClave?" );
 				statement += "CLAVE = '" + in.readLine() + "' AND ";
 
-				System.out.println( "\nSección?" );
+				System.out.println( "\nSeccion?" );
 				statement += "SECCION = " + in.readLine() + " ;";
 
 				stmt.executeUpdate( statement );
@@ -258,7 +288,7 @@ public class FinalProjectMySQL {
 				System.out.println( "\nSeccion?" );
 				statement += "SECCION = " + in.readLine() + " AND ";
 
-				System.out.println( "\nDía de la semana (1-7)?" );
+				System.out.println( "\nDia de la semana (1-7)?" );
 				statement += "DIASEM = " + in.readLine() + " AND ";
 
 				System.out.println( "\nHora?" );
@@ -282,7 +312,7 @@ public class FinalProjectMySQL {
 				System.out.println( conn.TRANSACTION_READ_COMMITTED + " = TRANSACTION_READ_COMMITTED" );
 				System.out.println( conn.TRANSACTION_REPEATABLE_READ + " = TRANSACTION_REPEATABLE_READ" );
 				System.out.println( conn.TRANSACTION_SERIALIZABLE + " = TRANSACTION_SERIALIZABLE\n\n" );
-				System.out.println( "Nivel?" );
+				System.out.println( "Seleccione el nuevo nivel deseado:" );
 				conn.setTransactionIsolation( Integer.parseInt( in.readLine() ) );
 			break;
 
@@ -312,7 +342,7 @@ public class FinalProjectMySQL {
 				if( ! transaction.menu() )
 					break;
 			} catch( Exception e ) {
-				System.err.println( "failed" );
+				System.err.println( "Failed" );
 				e.printStackTrace( System.err );
 			}
 
