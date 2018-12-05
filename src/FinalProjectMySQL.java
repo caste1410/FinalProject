@@ -73,6 +73,9 @@ public class FinalProjectMySQL {
 		Calendar calendar;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
+		boolean correct = false;
+		int duration;
+
 		System.out.println( "\nNivel de aislamiento = " + conn.getTransactionIsolation() + "\n" );
 		System.out.println( "(1) Lista completa de Cursos" );
 		System.out.println( "(2) Lista con predicado de Cursos" );
@@ -111,7 +114,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 3:	//Lista completa de Horarios
-				System.out.println( "\nCLAVEC\tSECCION\tDIASEM\tHORA\tMINUTO\tDURACION\tTITULOP\tIDSALON\n" );
+				System.out.println( "\nCLAVEC\t\tSECCION\tDIASEM\tHORA\tMINUTO\tDURACION TITULOP\tIDSALON\n" );
 				query( "select * from HORARIO" );
 			break;
 
@@ -121,7 +124,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 5:	//Lista completa de Periodos
-				System.out.println( "\nTITULOP\tFECHAINICIO\tFECHAFIN\n" );
+				System.out.println( "\nTITULOP\t\tFECHAINICIO\tFECHAFIN\n" );
 				query( "select * from PERIODO" );
 			break;
 
@@ -131,7 +134,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 7:	//Lista completa de Reservaciones
-				System.out.println( "\nIDSALON\tNOMBRE\tFECHA\tDIASEM\tHORA\tMINUTO\tDURACION\n" );
+				System.out.println( "\nIDSALON\tNOMBRE\tFECHA\t\tDIASEM\tHORA\tMINUTO\tDURACION\n" );
 				query( "select * from RESERVACION" );
 			break;
 
@@ -164,17 +167,16 @@ public class FinalProjectMySQL {
 				statement += "'" + dateString + "', ";
 
 				try {
-  					date = format.parse(dateString) ;
+  					date = format.parse(dateString);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
     			calendar.setTime(date);
     			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-				System.out.println( "\nDay of the week is: " + dayOfWeek );
 				
-				System.out.println( "Dia de la semana (1-7)?" );
-				statement += in.readLine() + ", ";
+				System.out.println( "Dia de la semana es " + dayOfWeek );
+				statement += dayOfWeek + ", ";
 
 				System.out.println( "Hora?" );
 				statement += in.readLine() + ", ";
@@ -182,9 +184,19 @@ public class FinalProjectMySQL {
 				System.out.println( "Minuto?" );
 				statement += in.readLine() + ", ";
 
-				System.out.println( "Duracion?" );
-				statement += in.readLine() + ");";
-
+				correct = false;
+				while (correct == false){
+					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
+					duration = Integer.parseInt(in.readLine());
+					if (duration % 60 == 0) {
+						statement += duration + ");";
+						correct = true;
+					}
+					else{
+						System.out.println( "Solo se puede reservar por hora (multiplos de 60 minutos)\n" );
+					}
+				}
+				
 				stmt.executeUpdate( statement );
 			break;
 
@@ -202,17 +214,16 @@ public class FinalProjectMySQL {
 				statement += "FECHA = '" + dateString + "' AND ";
 
 				try {
-  					date = format.parse(dateString) ;
+  					date = format.parse(dateString);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
     			calendar.setTime(date);
     			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-				System.out.println( "\nDay of the week is: " + dayOfWeek );
 
-				System.out.println( "\nDia de la Semana (1-7)?" );
-				statement += "DIASEM = " + in.readLine() + " AND ";
+				System.out.println( "\nDia de la Semana es " + dayOfWeek );
+				statement += "DIASEM = " + dayOfWeek + " AND ";
 
 				System.out.println( "\nHora?" );
 				statement += "HORA = " + in.readLine() + " ;";
@@ -250,8 +261,18 @@ public class FinalProjectMySQL {
 				System.out.println( "Minuto?" );
 				statement += in.readLine() + ", ";
 
-				System.out.println( "Duracion?" );
-				statement += in.readLine() + ", ";
+				correct = false;
+				while (correct == false){
+					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
+					duration = Integer.parseInt(in.readLine());
+					if (duration % 60 == 0) {
+						statement += duration + ", ";
+						correct = true;
+					}
+					else{
+						System.out.println( "Solo se puede crear un horario por hora (multiplos de 60 minutos)\n" );
+					}
+				}
 
 				System.out.println( "Periodo?" );
 				statement += "'" + in.readLine() + "', ";
