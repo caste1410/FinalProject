@@ -20,7 +20,7 @@ public class FinalProjectMySQL2 {
 	static final String URL = "jdbc:mysql://localhost/fptest?verifyServerCertificate=false&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	//static final String BD = "fptest";
 	static final String USER = "root";
-	static final String PASSWD = "sql.9221004";
+	static final String PASSWD = "";
 
 	public FinalProjectMySQL2() throws SQLException, Exception {
 		Class.forName( "com.mysql.cj.jdbc.Driver" );
