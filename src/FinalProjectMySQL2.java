@@ -64,6 +64,7 @@ public class FinalProjectMySQL2 {
 	}//end close()
 
 	private boolean menu() throws SQLException, IOException {
+		conn.setTransactionIsolation( Integer.parseInt( "4" ) );
 		String statement;
 
 		String hourString = "";
@@ -98,11 +99,8 @@ public class FinalProjectMySQL2 {
 		System.out.println( "(15) Agregar Horario" );
 		System.out.println( "(16) Borrar un Horario (Completo)" );
 		System.out.println( "(17) Modificar un Horario\n" );
-
-		System.out.println( "(18) Validar todas operaciones" );
-		System.out.println( "(19) Abortar todas las operaciones" );
-		System.out.println( "(20) Cambiar nivel de aislamiento" );
-		System.out.println( "(21) Salir\n\n" );
+		
+		System.out.println( "(18) Salir\n\n" );
 
 		System.out.print( "Ingrese la opcion deseada: " );
 
@@ -429,26 +427,8 @@ public class FinalProjectMySQL2 {
 				conn.commit();
 			break;
 
-			case 18: //Validar todas operaciones
-				conn.commit();
-			break;
 
-			case 19: //Abortar todas las operaciones
-				conn.rollback();
-			break;
-
-			case 20: //Cambiar nivel de aislamiento
-				System.out.println();
-				System.out.println( Connection.TRANSACTION_NONE + " = TRANSACTION_NONE" );
-				System.out.println( Connection.TRANSACTION_READ_UNCOMMITTED + " = TRANSACTION_READ_UNCOMMITTED" );
-				System.out.println( Connection.TRANSACTION_READ_COMMITTED + " = TRANSACTION_READ_COMMITTED" );
-				System.out.println( Connection.TRANSACTION_REPEATABLE_READ + " = TRANSACTION_REPEATABLE_READ" );
-				System.out.println( Connection.TRANSACTION_SERIALIZABLE + " = TRANSACTION_SERIALIZABLE\n\n" );
-				System.out.println( "Seleccione el nuevo nivel deseado:" );
-				conn.setTransactionIsolation( Integer.parseInt( in.readLine() ) );
-			break;
-
-			case 21: //Salir
+			case 18: //Salir
 				return false;
 
 			default: //En caso de no caer en ninguna de los anteriores
