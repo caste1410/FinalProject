@@ -225,8 +225,7 @@ public class FinalProjectMySQL2 {
 					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
 					value = Integer.parseInt(in.readLine());
 					if (value % 60 == 0) {
-						statement += value + " );";
-						correct = true;
+						statement += value + " );"; correct = true;
 					}
 					else{
 						System.out.println( "Solo se puede reservar por hora (multiplos de 60 minutos)\n" );
@@ -234,6 +233,7 @@ public class FinalProjectMySQL2 {
 				}
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 13: //Cancelar una Reservacion
@@ -265,18 +265,44 @@ public class FinalProjectMySQL2 {
 				statement += "HORAMIN = '" + in.readLine() + "' ;";
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 14: //Modificar una Reservacion
 				statement = "update RESERVACION set ";
 
-				System.out.println( "\n<Atributo> = <Valor>?" );
+				System.out.println( "\n<Atributo a cambiar> = <Valor que se quiere asignar>?" );
 				statement += in.readLine();
 
-				System.out.println( "Predicado?" );
-				statement += " where " + in.readLine();
+				statement += " where " 
+
+				System.out.println( "Salon? " );
+				statement += "IDSALON = '" + in.readLine() + "' AND ";
+
+				System.out.println( "Nombre? " );
+				statement += "NOMBRE = '" + in.readLine() + "' AND ";
+
+				System.out.println( "Fecha (yyyy-MM-dd)? " );
+				dateString = in.readLine();
+				statement += "FECHA = '" + dateString + "' AND ";
+
+				try {
+  					date = format.parse(dateString);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
+    			calendar.setTime(date);
+    			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+				System.out.println( "\nDia de la Semana es " + dayOfWeek );
+				statement += "DIASEM = " + dayOfWeek + " AND ";
+
+				System.out.println( "Hora y Minuto (HH:mm)? " );
+				statement += "HORAMIN = '" + in.readLine() + "' ;";
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 15: //Agregar Horario
@@ -293,8 +319,7 @@ public class FinalProjectMySQL2 {
 					System.out.println( "Dia de la Semana (1-7)?" );
 					value = Integer.parseInt(in.readLine());
 					if (value > 0 && value < 8) {
-						statement += value + ", ";
-						correct = true;
+						statement += value + ", "; correct = true;
 					}
 					else{
 						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
@@ -311,8 +336,7 @@ public class FinalProjectMySQL2 {
 					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
 					value = Integer.parseInt(in.readLine());
 					if (value % 60 == 0) {
-						statement += value + ", ";
-						correct = true;
+						statement += value + ", "; correct = true;
 					}
 					else{
 						System.out.println( "Solo se puede crear un horario por hora (multiplos de 60 minutos)\n" );
@@ -341,36 +365,47 @@ public class FinalProjectMySQL2 {
 				statement += "'" + hourString + "' );";
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 16: //Borrar un Horario (Completo)
 				statement = "delete from HORARIO where ";
 
 				System.out.println( "\nClave?" );
-				statement += "CLAVE = '" + in.readLine() + "' AND ";
+				statement += "CLAVEC = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nSeccion?" );
 				statement += "SECCION = " + in.readLine() + " AND";
 
-				System.out.println( "\nDia de la semana (1-7)?" );
-				statement += "DIASEM = " + in.readLine() + " AND";
+				correct = false;
+				while (correct == false){
+					System.out.println( "\nDia de la Semana (1-7)?" );
+					value = Integer.parseInt(in.readLine());
+					if (value > 0 && value < 8) {
+						statement += "DIASEM = " + value + " AND"; correct = true;
+					}
+					else{
+						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
+					}
+				}
 
 				System.out.println( "\nHora y Minuto (HH:mm)?" );
 				statement += "HORAMIN = '" + in.readLine() + "' ;";
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 17: //Modificar un Horario
 				statement = "update HORARIO set ";
 
-				System.out.println( "\n<Atributo> = <Valor>?" );
+				System.out.println( "\n<Atributo a cambiar> = <Valor que se quiere asignar>?" );
 				statement += in.readLine();
 
 				statement += " where ";
 
 				System.out.println( "\nClave?" );
-				statement += "CLAVE = '" + in.readLine() + "' AND ";
+				statement += "CLAVEC = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nSeccion?" );
 				statement += "SECCION = " + in.readLine() + " AND ";
@@ -380,8 +415,7 @@ public class FinalProjectMySQL2 {
 					System.out.println( "\nDia de la Semana (1-7)?" );
 					value = Integer.parseInt(in.readLine());
 					if (value > 0 && value < 8) {
-						statement += "DIASEM = " + value + " AND ";
-						correct = true;
+						statement += "DIASEM = " + value + " AND "; correct = true;
 					}
 					else{
 						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
@@ -392,6 +426,7 @@ public class FinalProjectMySQL2 {
 				statement += "HORAMIN = '" + in.readLine() + "'; ";
 
 				stmt.executeUpdate( statement );
+				conn.commit();
 			break;
 
 			case 18: //Validar todas operaciones
