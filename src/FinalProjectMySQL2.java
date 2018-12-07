@@ -274,7 +274,7 @@ public class FinalProjectMySQL2 {
 				System.out.println( "\n<Atributo a cambiar> = <Valor que se quiere asignar>?" );
 				statement += in.readLine();
 
-				statement += " where " 
+				statement += " where ";
 
 				System.out.println( "Salon? " );
 				statement += "IDSALON = '" + in.readLine() + "' AND ";
@@ -375,14 +375,14 @@ public class FinalProjectMySQL2 {
 				statement += "CLAVEC = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nSeccion?" );
-				statement += "SECCION = " + in.readLine() + " AND";
+				statement += "SECCION = " + in.readLine() + " AND ";
 
 				correct = false;
 				while (correct == false){
 					System.out.println( "\nDia de la Semana (1-7)?" );
 					value = Integer.parseInt(in.readLine());
 					if (value > 0 && value < 8) {
-						statement += "DIASEM = " + value + " AND"; correct = true;
+						statement += "DIASEM = " + value + " AND "; correct = true;
 					}
 					else{
 						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
