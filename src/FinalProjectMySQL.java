@@ -20,7 +20,7 @@ public class FinalProjectMySQL {
 	static final String URL = "jdbc:mysql://localhost/fptest?verifyServerCertificate=false&useSSL=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	//static final String BD = "fptest";
 	static final String USER = "root";
-	static final String PASSWD = "";
+	static final String PASSWD = "sql.9221004";
 
 	public FinalProjectMySQL() throws SQLException, Exception {
 		Class.forName( "com.mysql.cj.jdbc.Driver" );
@@ -70,11 +70,12 @@ public class FinalProjectMySQL {
 		String dateString = "";
 		Date date = null;
 		int dayOfWeek;
+		Integer hour;
 		Calendar calendar;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 		boolean correct = false;
-		int duration;
+		int value;
 
 		System.out.println( "\nNivel de aislamiento = " + conn.getTransactionIsolation() + "\n" );
 		System.out.println( "(1) Lista completa de Cursos" );
@@ -104,7 +105,7 @@ public class FinalProjectMySQL {
 
 		switch( Integer.parseInt( "0" + in.readLine() ) ) {
 			case 1:	//Lista completa de Cursos
-				System.out.println( "CLAVEC\tSECCION\tTITULO\tPROFESOR\n" );
+				System.out.println( "CLAVEC\t\tSECCION\tTITULO\tPROFESOR\n" );
 				query( "select * from CURSO" );
 			break;
 
@@ -144,7 +145,7 @@ public class FinalProjectMySQL {
 			break;
 
 			case 9: //Lista completa de Salones
-				System.out.println( "\nIDSALON\tCAPACIDAD\tTIPO\n" );
+				System.out.println( "\nIDSALON\tCAPACIDAD TIPO\n" );
 				query( "select * from SALON" );
 			break;
 
@@ -153,7 +154,42 @@ public class FinalProjectMySQL {
 				query( "select * from SALON where " + in.readLine() );
 			break;
 
+			case 21: //Visualizar salones disponibles para reservar
+				hour = null;
+				System.out.println( "Fecha (yyyy-mm-dd)?" );
+				dateString = in.readLine();
+				try {
+  					date = format.parse(dateString);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				calendar = Calendar.getInstance(TimeZone.getTimeZone("PST"));
+    			calendar.setTime(date);
+    			dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+				
+				System.out.println( "Dia de la semana es " + dayOfWeek );
+
+				System.out.println( "Hora? (Sin hora, se muestran los salones libres en todo el dia)" );
+				hour = Integer.parseInt(in.readLine());
+
+				System.out.println( "\nHorario - Salones desocupados" );
+				System.out.println( "IDSALON" );
+				if (hour == null) {
+					query( "select IDSALON from SALON where IDSALON NOT IN (select IDSALON from HORARIO where DIASEM = " + dayOfWeek + " );" );
+					System.out.println( "Reservacion - Salones desocupados" );
+					System.out.println( "IDSALON" );
+					query( "select IDSALON from SALON where IDSALON NOT IN (select IDSALON from RESERVACION where FECHA = '" + dateString + "' AND DIASEM = " + dayOfWeek + " );" );
+				}
+				else {
+					query( "select IDSALON from SALON where IDSALON NOT IN (select IDSALON from HORARIO where DIASEM = " + dayOfWeek + " AND HORA = " + hour + " );" );
+					System.out.println( "Reservacion - Salones desocupados a la hora " + hour );
+					System.out.println( "IDSALON" );
+					query( "select IDSALON from SALON where IDSALON NOT IN (select IDSALON from RESERVACION where FECHA = '" + dateString + "' AND DIASEM = " + dayOfWeek + " AND HORA = " + hour + " );" );
+				}
+			break;
+
 			case 11: //Hacer una Reservacion
+
 				statement = "insert into RESERVACION values ( ";
 
 				System.out.println( "\nSalon?" );
@@ -187,10 +223,9 @@ public class FinalProjectMySQL {
 				correct = false;
 				while (correct == false){
 					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
-					duration = Integer.parseInt(in.readLine());
-					if (duration % 60 == 0) {
-						statement += duration + ");";
-						correct = true;
+					value = Integer.parseInt(in.readLine());
+					if (value % 60 == 0) {
+						statement += value + " );"; correct = true;
 					}
 					else{
 						System.out.println( "Solo se puede reservar por hora (multiplos de 60 minutos)\n" );
@@ -252,8 +287,17 @@ public class FinalProjectMySQL {
 				System.out.println( "Seccion?" );
 				statement += in.readLine() + ", ";
 
-				System.out.println( "Dia de la Semana (1-7)?" );
-				statement += in.readLine() + ", ";
+				correct = false;
+				while (correct == false){
+					System.out.println( "Dia de la Semana (1-7)?" );
+					value = Integer.parseInt(in.readLine());
+					if (value > 0 && value < 8) {
+						statement += value + ", "; correct = true;
+					}
+					else{
+						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
+					}
+				}
 
 				System.out.println( "Hora?" );
 				statement += in.readLine() + ", ";
@@ -264,10 +308,9 @@ public class FinalProjectMySQL {
 				correct = false;
 				while (correct == false){
 					System.out.println( "Duracion? (Solo multiplos de 60 minutos)" );
-					duration = Integer.parseInt(in.readLine());
-					if (duration % 60 == 0) {
-						statement += duration + ", ";
-						correct = true;
+					value = Integer.parseInt(in.readLine());
+					if (value % 60 == 0) {
+						statement += value + ", "; correct = true;
 					}
 					else{
 						System.out.println( "Solo se puede crear un horario por hora (multiplos de 60 minutos)\n" );
@@ -290,7 +333,22 @@ public class FinalProjectMySQL {
 				statement += "CLAVE = '" + in.readLine() + "' AND ";
 
 				System.out.println( "\nSeccion?" );
-				statement += "SECCION = " + in.readLine() + " ;";
+				statement += "SECCION = " + in.readLine() + " AND";
+
+				correct = false;
+				while (correct == false){
+					System.out.println( "Dia de la Semana (1-7)?" );
+					value = Integer.parseInt(in.readLine());
+					if (value > 0 && value < 8) {
+						statement += "DIASEM = " + value + " AND"; correct = true;
+					}
+					else{
+						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
+					}
+				}
+
+				System.out.println( "\nHora?" );
+				statement += "HORA = " + in.readLine() + "; ";
 
 				stmt.executeUpdate( statement );
 			break;
@@ -309,8 +367,17 @@ public class FinalProjectMySQL {
 				System.out.println( "\nSeccion?" );
 				statement += "SECCION = " + in.readLine() + " AND ";
 
-				System.out.println( "\nDia de la semana (1-7)?" );
-				statement += "DIASEM = " + in.readLine() + " AND ";
+				correct = false;
+				while (correct == false){
+					System.out.println( "\nDia de la Semana (1-7)?" );
+					value = Integer.parseInt(in.readLine());
+					if (value > 0 && value < 8) {
+						statement += "DIASEM = " + value + " AND "; correct = true;
+					}
+					else{
+						System.out.println( "Error, ingresa un valor entre 1 y 7\n" );
+					}
+				}
 
 				System.out.println( "\nHora?" );
 				statement += "HORA = " + in.readLine() + "; ";
@@ -328,11 +395,11 @@ public class FinalProjectMySQL {
 
 			case 19: //Cambiar nivel de aislamiento
 				System.out.println();
-				System.out.println( conn.TRANSACTION_NONE + " = TRANSACTION_NONE" );
-				System.out.println( conn.TRANSACTION_READ_UNCOMMITTED + " = TRANSACTION_READ_UNCOMMITTED" );
-				System.out.println( conn.TRANSACTION_READ_COMMITTED + " = TRANSACTION_READ_COMMITTED" );
-				System.out.println( conn.TRANSACTION_REPEATABLE_READ + " = TRANSACTION_REPEATABLE_READ" );
-				System.out.println( conn.TRANSACTION_SERIALIZABLE + " = TRANSACTION_SERIALIZABLE\n\n" );
+				System.out.println( Connection.TRANSACTION_NONE + " = TRANSACTION_NONE" );
+				System.out.println( Connection.TRANSACTION_READ_UNCOMMITTED + " = TRANSACTION_READ_UNCOMMITTED" );
+				System.out.println( Connection.TRANSACTION_READ_COMMITTED + " = TRANSACTION_READ_COMMITTED" );
+				System.out.println( Connection.TRANSACTION_REPEATABLE_READ + " = TRANSACTION_REPEATABLE_READ" );
+				System.out.println( Connection.TRANSACTION_SERIALIZABLE + " = TRANSACTION_SERIALIZABLE\n\n" );
 				System.out.println( "Seleccione el nuevo nivel deseado:" );
 				conn.setTransactionIsolation( Integer.parseInt( in.readLine() ) );
 			break;
